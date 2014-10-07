@@ -1,5 +1,5 @@
 <?php
-if (in_array($_SERVER["SERVER_ADDR"], ['127.0.0.1', 'dev.nomadic.name'])) {
+if (in_array($_SERVER["SERVER_ADDR"], ['127.0.0.1', 'localhost', 'dev.nomadic.name'])) {
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
 } else {
@@ -131,7 +131,7 @@ if (!empty($_REQUEST['name'])) {
 					var count_input = document.getElementById('count');
 					if (count_input.getAttribute('name') && count_input.value > 0  && count_input.value != 20) url = url+'&count='+count_input.value;
 					var exclude_replies = document.getElementById('exclude_replies');
-					if (exclude_replies.checked) url = url + '&exclude_replies=on'
+					if (exclude_replies.checked) url = url + '&exclude_replies=on';
 					window.location = url;
 				};
 			</script>
