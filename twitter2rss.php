@@ -83,41 +83,44 @@ if (!empty($_REQUEST['name'])) {
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body style="padding: 20px;">
-<div class="container">
-	<div class="jumbotron vertical-center">
-		<div class="container">
-			<h1>Twitter to RSS
-				<small>proxy</small>
-			</h1>
-			<p>Enter Twitter name and get full RSS feed!</p>
-			<form class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
-				<div class="form-group">
-					<div class="input-group input-group-lg">
-						<span class="input-group-addon">@</span>
-						<input type="text" name="name" class="form-control search-query" placeholder="Twitter name" required>
-						<span class="input-group-btn">
-							<input class="btn btn-primary" type="submit" value="Get RSS">
-						</span>
-					</div>
-				</div>
- 				<div class="form-group">
-						<label for="count" class="col-sm-3 control-label" style="text-align: left;">Number of tweets to retrieve</label>
-						<div class="col-sm-2">
-							<input name="count" id="count" class="form-control" value="20" required>
+	<div class="container">
+		<div class="jumbotron vertical-center">
+			<div class="container">
+				<h1>Twitter to RSS
+					<small>proxy</small>
+				</h1>
+				<p>Enter Twitter name and get full RSS feed!</p>
+				<form class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
+					<div class="form-group">
+						<div class="input-group input-group-lg">
+							<span class="input-group-addon">@</span>
+							<input type="text" name="name" class="form-control search-query" placeholder="Twitter name" required>
+								<span class="input-group-btn">
+									<input class="btn btn-primary" type="submit" value="Get RSS">
+								</span>
 						</div>
-						<label for="count" class="control-label">(max 200)</label>
-				</div>
-					<div class="checkbox">
-					   <label>
-						   <input name="exclude_replies" type="checkbox"> <strong>Exclude Replies</strong>
-					   </label>
-					 </div>
-			</form>
-		</div>
-	</div> <!-- jumbotron -->
- 	<footer class="navbar-fixed-bottom">
-		<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
-	</footer>
-</div>
+						<div class="panel panel-default" style="margin-top: 20px;">
+							<div class="panel-body">
+								<div class="form-group" style="margin-bottom: 0;">
+									<label for="count" class="col-sm-3 control-label">Number of tweets (max 200):</label>
+									<div class="col-sm-2">
+										<input name="count" id="count" class="form-control" value="20" required>
+									</div>
+									<div class="checkbox">
+										<label>
+											<input name="exclude_replies" type="checkbox"> Exclude Replies
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+				</form>
+			</div>
+		</div> <!-- jumbotron -->
+		<footer class="navbar-fixed-bottom">
+			<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
+		</footer>
+	</div>
 </body>
 </html>
