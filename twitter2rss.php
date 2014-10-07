@@ -110,7 +110,7 @@ if (!empty($_REQUEST['name'])) {
 									<div class="col-sm-2">
 										<input name="count" id="count" class="form-control" placeholder="20">
 									</div>
-									<input style="margin-top: 10px;" name="exclude_replies" type="checkbox"> Exclude Replies
+									<input style="margin-top: 10px;" name="exclude_replies" id="exclude_replies" type="checkbox"> Exclude Replies
 								</div>
 							</div>
 						</div>
@@ -118,23 +118,31 @@ if (!empty($_REQUEST['name'])) {
 				</form>
 			</div>
 		</div> <!-- jumbotron -->
+		<?php
+		if (in_array('mod_rewrite', apache_get_modules())) {
+			?>
+			<script>
+				var Form = document.getElementById('tform');
+				Form.onsubmit = function(event) {
+					event.preventDefault ? event.preventDefault() : event.returnValue = false;
+					var url = document.URL;
+					var screen_name = document.getElementById('name');
+					if (screen_name.value != '') url = url + screen_name.value;
+					var count_input = document.getElementById('count');
+					if (count_input.getAttribute('name') && count_input.value > 0  && count_input.value != 20) url = url+'&count='+count_input.value;
+					var exclude_replies = document.getElementById('exclude_replies');
+					if (exclude_replies.checked) url = url + '&exclude_replies=on'
+					window.location = url;
+				};
+			</script>
+		<?php
+		} else {
+		?>
+			<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span> Apache mod_rewrite disabled!</div>
+		<?php } ?>
 		<footer class="navbar-fixed-bottom">
 			<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
 		</footer>
 	</div>
-	<script>
-		var Form = document.getElementById('tform');
-		Form.onsubmit = function(event) {
-			var count_input = document.getElementById('count');
-			if (count_input.getAttribute('name') && !count_input.value) {
-					count_input.setAttribute('name', '');
-				}
-			var screen_name = document.getElementById('name');
-			if (screen_name.value != '') {
-				Form.action = screen_name.value;
-				screen_name.setAttribute('name', '');
-			}
-		};
-	</script>
 </body>
 </html>
