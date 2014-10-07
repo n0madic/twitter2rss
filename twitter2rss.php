@@ -12,6 +12,9 @@ require_once('config.php');
 
 mb_internal_encoding("UTF-8");
 
+$count = (!empty($_REQUEST['count'])) ?	(($_REQUEST['count'] <= 200) ? $_REQUEST['count'] : '200') : '20';
+$exclude_replies = (!empty($_REQUEST['exclude_replies'])) ? 'true' : 'false';
+
 if (!empty($_REQUEST['name'])) {
 
 	$screen_name = $_REQUEST['name'];
@@ -28,7 +31,8 @@ if (!empty($_REQUEST['name'])) {
 										'include_rts' => 'true',
 										'trim_user' => 'true',
 										'screen_name' => $screen_name,
-										'count' => '20'), true);
+										'exclude_replies' => $exclude_replies,
+										'count' => $count), true);
 	if ($code == 200) {
 		$responseData = json_decode($tmhOAuth->response['response'], true);
 		//	echo '<pre>'; print_r($responseData); echo '</pre>';
@@ -51,8 +55,9 @@ if (!empty($_REQUEST['name'])) {
 			echo '<updated>' . date('c', strtotime($tweet['created_at'])) . '</updated>' . PHP_EOL;
 			echo '<link href="https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '"/>' . PHP_EOL;
 			$text = preg_replace('/(http:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $tweet['text']);
-			echo '<summary type="html"><![CDATA[' . $text . '<br />';
+			echo '<summary type="html"><![CDATA[' . $text;
 			if (isset($tweet['extended_entities']['media'])) {
+				 echo '<br />';
 				foreach ($tweet['extended_entities']['media'] as $media) {
 					echo '<img src="' . $media['media_url'] . '">';
 					echo '<br />';
@@ -85,18 +90,32 @@ if (!empty($_REQUEST['name'])) {
 				<small>proxy</small>
 			</h1>
 			<p>Enter Twitter name and get full RSS feed!</p>
-			<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
-				<div class="input-group input-group-lg">
-					<span class="input-group-addon">@</span>
-					<input type="text" name="name" class="form-control search-query" placeholder="Twitter name" required>
-					<span class="input-group-btn">
-						<input class="btn btn-primary" type="submit" value="Get RSS">
-					</span>
+			<form class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
+				<div class="form-group">
+					<div class="input-group input-group-lg">
+						<span class="input-group-addon">@</span>
+						<input type="text" name="name" class="form-control search-query" placeholder="Twitter name" required>
+						<span class="input-group-btn">
+							<input class="btn btn-primary" type="submit" value="Get RSS">
+						</span>
+					</div>
 				</div>
+ 				<div class="form-group">
+						<label for="count" class="col-sm-3 control-label" style="text-align: left;">Number of tweets to retrieve</label>
+						<div class="col-sm-2">
+							<input name="count" id="count" class="form-control" value="20" required>
+						</div>
+						<label for="count" class="control-label">(max 200)</label>
+				</div>
+					<div class="checkbox">
+					   <label>
+						   <input name="exclude_replies" type="checkbox"> <strong>Exclude Replies</strong>
+					   </label>
+					 </div>
 			</form>
 		</div>
-	</div>
-	<footer class="navbar-fixed-bottom">
+	</div> <!-- jumbotron -->
+ 	<footer class="navbar-fixed-bottom">
 		<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
 	</footer>
 </div>
