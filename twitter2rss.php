@@ -34,7 +34,12 @@ if (!empty($_REQUEST['name'])) {
 										'count' => $count), true);
 	if ($code == 200) {
 		$responseData = json_decode($tmhOAuth->response['response'], true);
-		//	echo '<pre>'; print_r($responseData); echo '</pre>';
+		if (isset($_REQUEST['response'])) {
+			echo '<h1>[DEBUG] Response from twitter server:</h1>';
+			header('Content-Type: text/html; charset=utf-8');
+			var_dump($responseData);
+			die();
+		}
 		header('Content-Type: application/atom+xml; charset=utf-8');
 		echo '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL;
 		echo '<feed xmlns="http://www.w3.org/2005/Atom">' . PHP_EOL;
