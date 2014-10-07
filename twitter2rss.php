@@ -12,12 +12,11 @@ require_once('config.php');
 
 mb_internal_encoding("UTF-8");
 
-$count = (!empty($_REQUEST['count'])) ?	(($_REQUEST['count'] <= 200) ? $_REQUEST['count'] : '200') : '20';
-$exclude_replies = (!empty($_REQUEST['exclude_replies'])) ? 'true' : 'false';
-
 if (!empty($_REQUEST['name'])) {
 
-	$screen_name = $_REQUEST['name'];
+	$screen_name = trim($_REQUEST['name']);
+	$count = (!empty($_REQUEST['count'])) ? (($_REQUEST['count'] <= 200) ? $_REQUEST['count'] : '200') : '20';
+	$exclude_replies = (!empty($_REQUEST['exclude_replies'])) ? 'true' : 'false';
 
 	$tmhOAuth = new tmhOAuth(array(
 		'consumer_key' => CONSUMER_KEY,
@@ -90,11 +89,11 @@ if (!empty($_REQUEST['name'])) {
 					<small>proxy</small>
 				</h1>
 				<p>Enter Twitter name and get full RSS feed!</p>
-				<form class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
+				<form id="tform" class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
 					<div class="form-group">
 						<div class="input-group input-group-lg">
 							<span class="input-group-addon">@</span>
-							<input type="text" name="name" class="form-control search-query" placeholder="Twitter name" required>
+							<input type="text" id="name" name="name" class="form-control search-query" placeholder="Twitter name" required>
 								<span class="input-group-btn">
 									<input class="btn btn-primary" type="submit" value="Get RSS">
 								</span>
@@ -104,17 +103,13 @@ if (!empty($_REQUEST['name'])) {
 								<div class="form-group" style="margin-bottom: 0;">
 									<label for="count" class="col-sm-3 control-label">Number of tweets (max 200):</label>
 									<div class="col-sm-2">
-										<input name="count" id="count" class="form-control" value="20" required>
+										<input name="count" id="count" class="form-control" placeholder="20">
 									</div>
-									<div class="checkbox">
-										<label>
-											<input name="exclude_replies" type="checkbox"> Exclude Replies
-										</label>
-									</div>
+									<input style="margin-top: 10px;" name="exclude_replies" type="checkbox"> Exclude Replies
 								</div>
 							</div>
 						</div>
-
+					</div>
 				</form>
 			</div>
 		</div> <!-- jumbotron -->
@@ -122,5 +117,19 @@ if (!empty($_REQUEST['name'])) {
 			<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
 		</footer>
 	</div>
+	<script>
+		var Form = document.getElementById('tform');
+		Form.onsubmit = function(event) {
+			var count_input = document.getElementById('count');
+			if (count_input.getAttribute('name') && !count_input.value) {
+					count_input.setAttribute('name', '');
+				}
+			var screen_name = document.getElementById('name');
+			if (screen_name.value != '') {
+				Form.action = screen_name.value;
+				screen_name.setAttribute('name', '');
+			}
+		};
+	</script>
 </body>
 </html>
