@@ -44,13 +44,14 @@ if (!empty($_REQUEST['name'])) {
 		echo '<updated>' . $date->format("Y-m-d\TH:i:s\Z") . '</updated>' . PHP_EOL;
 		foreach ($responseData as $tweet) {
 			echo '<entry>' . PHP_EOL;
-			echo '<title>' . htmlspecialchars(preg_replace('/(.*?[?!.\n])(?=\s|\n|$).*/', '$1', $tweet['text'])) . '</title>' . PHP_EOL;
+			$title = preg_split("/\r\n|\n|\r/", $tweet['text'], -1, PREG_SPLIT_NO_EMPTY);
+			echo '<title>' . htmlspecialchars(preg_replace("/:$/", "$1", trim(preg_replace('/^(.*?)(?=http:\/\/t.co|([.?!]\s|$)).+/', '$1', $title[0])))) . '</title>' . PHP_EOL;
 			echo '<author><name>' . $screen_name . '</name></author>' . PHP_EOL;
 			echo '<id>tag:twitter.com,' . date('Y-m-d') . ':' . $screen_name . '/statuses/' . $tweet['id'] . '</id>' . PHP_EOL;
 			echo '<updated>' . date('c', strtotime($tweet['created_at'])) . '</updated>' . PHP_EOL;
 			echo '<link href="https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '"/>' . PHP_EOL;
 			$text = preg_replace('/(http:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $tweet['text']);
-			echo '<summary><![CDATA[' . $text . '<br />';
+			echo '<summary type="html"><![CDATA[' . $text . '<br />';
 			if (isset($tweet['extended_entities']['media'])) {
 				foreach ($tweet['extended_entities']['media'] as $media) {
 					echo '<img src="' . $media['media_url'] . '">';
