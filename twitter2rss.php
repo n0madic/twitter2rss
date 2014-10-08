@@ -1,12 +1,4 @@
 <?php
-if (in_array($_SERVER["SERVER_ADDR"], ['127.0.0.1', 'localhost', 'dev.nomadic.name'])) {
-	ini_set('display_errors', 'On');
-	error_reporting(E_ALL);
-} else {
-	ini_set('display_errors', 'Off');
-	error_reporting(E_ERROR);
-}
-
 require_once('tmhOAuth.php');
 require_once('config.php');
 
