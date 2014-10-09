@@ -42,13 +42,16 @@ if (!empty($_REQUEST['name'])) {
 		echo '<link type="text/html" href="https://twitter.com/' . $screen_name . '" rel="alternate"/>' . PHP_EOL;
 		$date = new DateTime($responseData[0]['created_at']);
 		echo '<updated>' . $date->format("Y-m-d\TH:i:s\Z") . '</updated>' . PHP_EOL;
+		echo '<pubDate>' . $date->format("D, d M Y H:i:s T") . '</pubDate>' . PHP_EOL;
+		echo '<lastBuildDate>' . date("D, d M Y H:i:s T") . '</lastBuildDate>' . PHP_EOL;
 		foreach ($responseData as $tweet) {
 			echo '<entry>' . PHP_EOL;
 			$title = preg_split("/\r\n|\n|\r/", $tweet['text'], -1, PREG_SPLIT_NO_EMPTY);
 			echo '<title>' . htmlspecialchars(preg_replace("/:$/", "$1", trim(preg_replace('/^(.*?)(?=http:\/\/t.co|([.?!]\s|$)).+/', '$1', $title[0])))) . '</title>' . PHP_EOL;
 			echo '<author><name>' . $screen_name . '</name></author>' . PHP_EOL;
 			echo '<id>tag:twitter.com,' . date('Y-m-d') . ':' . $screen_name . '/statuses/' . $tweet['id'] . '</id>' . PHP_EOL;
-			echo '<updated>' . date('c', strtotime($tweet['created_at'])) . '</updated>' . PHP_EOL;
+			echo '<updated>' . gmdate('Y-m-d\TH:i:s\Z', strtotime($tweet['created_at'])) . '</updated>' . PHP_EOL;
+			echo '<pubDate>' . date('r', strtotime($tweet['created_at'])) . '</pubDate>' . PHP_EOL;
 			echo '<link href="https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '"/>' . PHP_EOL;
 			$text = preg_replace('/(http:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $tweet['text']);
 			echo '<summary type="html"><![CDATA[' . $text;
@@ -76,6 +79,7 @@ if (!empty($_REQUEST['name'])) {
 <head>
 	<title>Twitter to RSS proxy</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="keywords" content="Twitter, RSS, Atom, feed, reader, agregator, convert to, convert, to">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body style="padding: 20px;">
@@ -119,11 +123,11 @@ if (!empty($_REQUEST['name'])) {
 					event.preventDefault ? event.preventDefault() : event.returnValue = false;
 					var url = document.URL;
 					var screen_name = document.getElementById('name');
-					if (screen_name.value != '') url = url + screen_name.value;
+					if (screen_name.value !== '') url += screen_name.value;
 					var count_input = document.getElementById('count');
-					if (count_input.getAttribute('name') && count_input.value > 0  && count_input.value != 20) url = url+'&count='+count_input.value;
+					if (count_input.getAttribute('name') && count_input.value > 0  && count_input.value !== 20) url += '&count='+count_input.value;
 					var exclude_replies = document.getElementById('exclude_replies');
-					if (exclude_replies.checked) url = url + '&exclude_replies=on';
+					if (exclude_replies.checked) url += '&exclude_replies=on';
 					window.location = url;
 				};
 			</script>
@@ -133,7 +137,7 @@ if (!empty($_REQUEST['name'])) {
 			<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span> Apache mod_rewrite disabled!</div>
 		<?php } ?>
 		<footer class="navbar-fixed-bottom">
-			<div style="text-align: center;"><p>&copy; Nomadic 2014</p></div>
+			<div style="text-align: center;"><p><a href="https://github.com/n0madic/twitter2rss">GitHub</a> &copy; Nomadic 2014</p></div>
 		</footer>
 	</div>
 </body>
