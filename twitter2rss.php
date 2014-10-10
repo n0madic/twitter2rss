@@ -32,29 +32,25 @@ if (!empty($_REQUEST['name'])) {
 			var_dump($responseData);
 			die();
 		}
-		header('Content-Type: application/atom+xml; charset=utf-8');
-		echo '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL;
-		echo '<feed xmlns="http://www.w3.org/2005/Atom">' . PHP_EOL;
-		echo '<id>tag:twitter.com,' . date('Y-m-d') . ':' . $screen_name . '</id>' . PHP_EOL;
+		header('Content-Type: text/xml; charset=utf-8');
+		echo'<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL;
+		echo '<rss version="2.0" xmlns:content="http://www.w3.org/2005/Atom">' . PHP_EOL;
+		echo '<channel>' . PHP_EOL;
 		echo '<title>Twitter feed @' . $screen_name . '</title>' . PHP_EOL;
-		echo '<author><name>' . $screen_name . '</name></author>' . PHP_EOL;
-		echo '<link type="application/atom+xml" href="' . (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . '" rel="self"/>' . PHP_EOL;
-		echo '<link type="text/html" href="https://twitter.com/' . $screen_name . '" rel="alternate"/>' . PHP_EOL;
-		$date = new DateTime($responseData[0]['created_at']);
-		echo '<updated>' . $date->format("Y-m-d\TH:i:s\Z") . '</updated>' . PHP_EOL;
-		echo '<pubDate>' . $date->format("D, d M Y H:i:s T") . '</pubDate>' . PHP_EOL;
-		echo '<lastBuildDate>' . date("D, d M Y H:i:s T") . '</lastBuildDate>' . PHP_EOL;
+		echo '<description>Twitter feed @' . $screen_name . ' through Twitter to RSS proxy by Nomadic</description>' . PHP_EOL;
+		echo '<link>https://twitter.com/' . $screen_name . '</link>' . PHP_EOL;
+		echo '<pubDate>' . date('r', strtotime($responseData[0]['created_at'])) . '</pubDate>' . PHP_EOL;
+		echo '<lastBuildDate>' . date('r') . '</lastBuildDate>' . PHP_EOL;
 		foreach ($responseData as $tweet) {
-			echo '<entry>' . PHP_EOL;
+			echo '<item>' . PHP_EOL;
 			$title = preg_split("/\r\n|\n|\r/", $tweet['text'], -1, PREG_SPLIT_NO_EMPTY);
 			echo '<title>' . htmlspecialchars(preg_replace("/:$/", "$1", trim(preg_replace('/^(.*?)(?=http:\/\/t.co|([.?!]\s|$)).+/', '$1', $title[0])))) . '</title>' . PHP_EOL;
-			echo '<author><name>' . $screen_name . '</name></author>' . PHP_EOL;
-			echo '<id>tag:twitter.com,' . date('Y-m-d') . ':' . $screen_name . '/statuses/' . $tweet['id'] . '</id>' . PHP_EOL;
-			echo '<updated>' . gmdate('Y-m-d\TH:i:s\Z', strtotime($tweet['created_at'])) . '</updated>' . PHP_EOL;
+			echo '<author>' . $screen_name . '</author>' . PHP_EOL;
 			echo '<pubDate>' . date('r', strtotime($tweet['created_at'])) . '</pubDate>' . PHP_EOL;
-			echo '<link href="https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '"/>' . PHP_EOL;
+			echo '<guid isPermaLink="true">https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</guid>' . PHP_EOL;
+			echo '<link>https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</link>' . PHP_EOL;
 			$text = preg_replace('/(http:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $tweet['text']);
-			echo '<summary type="html"><![CDATA[' . $text;
+			echo '<description><![CDATA[' . nl2br($text);
 			if (isset($tweet['extended_entities']['media'])) {
 				 echo '<br />';
 				foreach ($tweet['extended_entities']['media'] as $media) {
@@ -62,10 +58,11 @@ if (!empty($_REQUEST['name'])) {
 					echo '<br />';
 				}
 			}
-			echo ']]></summary>' . PHP_EOL;
-			echo '</entry>' . PHP_EOL;
+			echo ']]></description>' . PHP_EOL;
+			echo '</item>' . PHP_EOL;
 		}
-		echo '</feed>' . PHP_EOL;
+		echo '</channel>' . PHP_EOL;
+		echo '</rss>' . PHP_EOL;
 		die();
 	} else {
 		http_response_code(404);
@@ -80,7 +77,7 @@ if (!empty($_REQUEST['name'])) {
 	<title>Twitter to RSS proxy</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="keywords" content="Twitter, RSS, Atom, feed, reader, agregator, convert to, convert, to">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body style="padding: 20px;">
 	<div class="container">
@@ -88,8 +85,8 @@ if (!empty($_REQUEST['name'])) {
 			<div class="container">
 				<h1>Twitter to RSS
 					<small>proxy</small>
-				</h1>
-				<p>Enter Twitter name and get full RSS feed!</p>
+				</h1><br />
+				<p>Enter Twitter name and get full RSS feed include images!</p>
 				<form id="tform" class="form-horizontal" role="form" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
 					<div class="form-group">
 						<div class="input-group input-group-lg">
