@@ -50,7 +50,7 @@ if (!empty($_REQUEST['name'])) {
 			echo '<guid isPermaLink="true">https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</guid>' . PHP_EOL;
 			echo '<link>https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</link>' . PHP_EOL;
 			$text = (isset($tweet['retweeted_status'])) ? $tweet['retweeted_status']['text'] : $tweet['text'];
-			$text = preg_replace('/(http:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $text);
+			$text = preg_replace('/(https?:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $text);
 			echo '<description><![CDATA[' . nl2br($text);
 			if (isset($tweet['extended_entities']['media'])) {
 				 echo '<br />';
