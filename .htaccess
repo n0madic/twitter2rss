@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond $1 !^(index\.htm|index\.php|robots\.txt)
+	RewriteRule ^(.*)$ twitter2rss.php?name=$1 [L,QSA]
+
+	RewriteRule ^$ twitter2rss.php [L,QSA]
+</IfModule>
