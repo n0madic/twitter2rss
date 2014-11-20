@@ -2,8 +2,6 @@
 require_once('tmhOAuth.php');
 require_once('config.php');
 
-mb_internal_encoding("UTF-8");
-
 if (!empty($_REQUEST['name'])) {
 
 	$screen_name = trim($_REQUEST['name']);
