@@ -2,9 +2,9 @@
 require_once('tmhOAuth.php');
 require_once('config.php');
 
-if (!empty($_REQUEST['name'])) {
+if ($_SERVER['REQUEST_URI'] != '/') {
+    $screen_name = trim(explode("&", urldecode($_SERVER['REQUEST_URI']))[0], "/");
 
-	$screen_name = trim($_REQUEST['name']);
 	$count = (!empty($_REQUEST['count'])) ? (($_REQUEST['count'] <= 200) ? $_REQUEST['count'] : '200') : '20';
 	$exclude_replies = (!empty($_REQUEST['exclude_replies'])) ? 'true' : 'false';
 
@@ -110,14 +110,11 @@ if (!empty($_REQUEST['name'])) {
 				</form>
 			</div>
 		</div> <!-- jumbotron -->
-		<?php
-		if (in_array('mod_rewrite', apache_get_modules())) {
-			?>
 			<script>
 				var Form = document.getElementById('tform');
 				Form.onsubmit = function(event) {
 					event.preventDefault ? event.preventDefault() : event.returnValue = false;
-					var url = document.URL;
+					var url = "/";
 					var screen_name = document.getElementById('name');
 					if (screen_name.value !== '') url += screen_name.value;
 					var count_input = document.getElementById('count');
@@ -127,13 +124,8 @@ if (!empty($_REQUEST['name'])) {
 					window.location = url;
 				};
 			</script>
-		<?php
-		} else {
-		?>
-			<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span> Apache mod_rewrite disabled!</div>
-		<?php } ?>
 		<footer class="navbar-fixed-bottom">
-			<div style="text-align: center;"><p><a href="https://github.com/n0madic/twitter2rss">GitHub</a> &copy; Nomadic 2014</p></div>
+			<div style="text-align: center;"><p><a href="https://github.com/n0madic/twitter2rss">GitHub</a> &copy; Nomadic 2014-2017</p></div>
 		</footer>
 	</div>
 </body>
