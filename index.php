@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 			echo '<title>' . htmlspecialchars(preg_replace("/:$/", "$1", trim(preg_replace('/^(.*?)(?=http:\/\/t.co|([.?!]\s|$)).+/', '$1', $title[0])))) . '</title>' . PHP_EOL;
 			echo '<author>' . $screen_name . '</author>' . PHP_EOL;
 			echo '<pubDate>' . date('r', strtotime($tweet['created_at'])) . '</pubDate>' . PHP_EOL;
-			echo '<guid isPermaLink="true">https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</guid>' . PHP_EOL;
-			echo '<link>https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id'] . '</link>' . PHP_EOL;
+			echo '<guid isPermaLink="true">https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id_str'] . '</guid>' . PHP_EOL;
+			echo '<link>https://twitter.com/' . $screen_name . '/statuses/' . $tweet['id_str'] . '</link>' . PHP_EOL;
 			$text = (isset($tweet['retweeted_status'])) ? $tweet['retweeted_status']['text'] : $tweet['text'];
 			$text = preg_replace('/(https?:\/\/t\.co\/\w+)(?=\s|$)/', '<a href=$1>$1</a>', $text);
 			echo '<description><![CDATA[' . nl2br($text);
