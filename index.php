@@ -3,7 +3,7 @@ require_once('tmhOAuth.php');
 require_once('config.php');
 
 if ($_SERVER['REQUEST_URI'] != '/') {
-    $screen_name = trim(explode("&", urldecode($_SERVER['REQUEST_URI']))[0], "/");
+    $screen_name = trim(explode("?", urldecode($_SERVER['REQUEST_URI']))[0], "/");
 
 	$count = (!empty($_REQUEST['count'])) ? (($_REQUEST['count'] <= 200) ? $_REQUEST['count'] : '200') : '20';
 	$exclude_replies = (!empty($_REQUEST['exclude_replies'])) ? 'true' : 'false';
@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 	if ($code == 200) {
 		$responseData = json_decode($tmhOAuth->response['response'], true);
 		if (isset($_REQUEST['response'])) {
-			echo '<h1>[DEBUG] Response from twitter server:</h1>';
-			header('Content-Type: text/html; charset=utf-8');
-			var_dump($responseData);
+            header('Content-Type: text/plain; charset=utf-8');
+			echo '[DEBUG] Response from twitter server:'.PHP_EOL;
+			print_r($responseData);
 			die();
 		}
 		header('Content-Type: text/xml; charset=utf-8');
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 					<div class="form-group">
 						<div class="input-group input-group-lg">
 							<span class="input-group-addon">@</span>
-							<input type="text" id="name" name="name" class="form-control search-query" placeholder="Twitter name" required>
+							<input type="text" id="name" class="form-control search-query" placeholder="Twitter name" required>
 								<span class="input-group-btn">
 									<input class="btn btn-primary" type="submit" value="Get RSS">
 								</span>
@@ -113,15 +113,9 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 			<script>
 				var Form = document.getElementById('tform');
 				Form.onsubmit = function(event) {
-					event.preventDefault ? event.preventDefault() : event.returnValue = false;
-					var url = "/";
-					var screen_name = document.getElementById('name');
-					if (screen_name.value !== '') url += screen_name.value;
+                    document.getElementById('tform').action = '/' + document.getElementById('name').value
 					var count_input = document.getElementById('count');
-					if (count_input.getAttribute('name') && count_input.value > 0  && count_input.value !== 20) url += '&count='+count_input.value;
-					var exclude_replies = document.getElementById('exclude_replies');
-					if (exclude_replies.checked) url += '&exclude_replies=on';
-					window.location = url;
+					if (count_input.value == 0  || count_input.value == 20) count_input.name='';
 				};
 			</script>
 		<footer class="navbar-fixed-bottom">
