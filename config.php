@@ -5,8 +5,8 @@
  * A single location to store configuration.
  */
 
-define('CONSUMER_KEY', 'tSUXnWXwLHDJw35I6kmvwXN3G');
-define('CONSUMER_SECRET', 'IS4RbGG1HYNXKIOp5lmVNqjSZsN4AzQN2F5d0DqRfdhiEQOKdo');
-define('USER_TOKEN', '???');
-define('USER_SECRET', '???');
+define('CONSUMER_KEY', getenv('CONSUMER_KEY') ? getenv('CONSUMER_KEY') : "");
+define('CONSUMER_SECRET', getenv('CONSUMER_SECRET') ? getenv('CONSUMER_SECRET') : "");
+define('USER_TOKEN', getenv('USER_TOKEN') ? getenv('USER_TOKEN') : "");
+define('USER_SECRET', getenv('USER_SECRET') ? getenv('USER_SECRET') : "");
 ?>
