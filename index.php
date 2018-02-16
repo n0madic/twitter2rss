@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 	} else {
 		http_response_code(404);
 		header('Content-Type: text/plain; charset=utf-8');
-		errmsg = 'ERROR get twitter\'s timeline for ' . $screen_name;
-		error_log(errmsg);
-		die(errmsg);
+		$errmsg = 'ERROR get twitter\'s timeline for ' . $screen_name;
+		error_log($errmsg);
+		die($errmsg);
 	}
 }
 ?>
