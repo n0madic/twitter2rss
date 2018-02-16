@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 		}
 		echo '</channel>' . PHP_EOL;
 		echo '</rss>' . PHP_EOL;
-		error_log("Return timeline for ' . $screen_name");
+		error_log("Return timeline for $screen_name");
 		die();
 	} else {
 		http_response_code(404);
