@@ -62,11 +62,14 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 		}
 		echo '</channel>' . PHP_EOL;
 		echo '</rss>' . PHP_EOL;
+		error_log("Return timeline for ' . $screen_name");
 		die();
 	} else {
 		http_response_code(404);
 		header('Content-Type: text/plain; charset=utf-8');
-		die('ERROR get twitter\'s timeline for ' . $screen_name);
+		errmsg = 'ERROR get twitter\'s timeline for ' . $screen_name;
+		error_log(errmsg);
+		die(errmsg);
 	}
 }
 ?>
@@ -76,7 +79,7 @@ if ($_SERVER['REQUEST_URI'] != '/') {
 	<title>Twitter to RSS proxy</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="keywords" content="Twitter, RSS, Atom, feed, reader, agregator, convert to, convert, to">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body style="padding: 20px;">
 	<div class="container">
