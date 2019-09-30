@@ -38,8 +38,8 @@ func Twitter2RSS(screenName string, pages int, excludeReplies bool) (string, err
 			feed.Created = tweet.TimeParsed
 		}
 
-		title := strings.FieldsFunc(tweet.HTML, func(r rune) bool {
-			return r == '\n' || r == '!' || r == '?' || r == ':' || r == '<' || r == '.'
+		title := strings.FieldsFunc(tweet.Text, func(r rune) bool {
+			return r == '\n' || r == '!' || r == '?' || r == ':' || r == '<' || r == '.' || r == ','
 		})[0]
 		if strings.HasPrefix(title, "a href") || strings.HasPrefix(title, "http") {
 			title = "link"
