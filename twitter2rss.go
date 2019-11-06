@@ -38,11 +38,17 @@ func Twitter2RSS(screenName string, pages int, excludeReplies bool) (string, err
 			feed.Created = tweet.TimeParsed
 		}
 
-		title := strings.FieldsFunc(tweet.Text, func(r rune) bool {
+		var title string
+
+		titleSplit := strings.FieldsFunc(tweet.Text, func(r rune) bool {
 			return r == '\n' || r == '!' || r == '?' || r == ':' || r == '<' || r == '.' || r == ','
-		})[0]
-		if strings.HasPrefix(title, "a href") || strings.HasPrefix(title, "http") {
-			title = "link"
+		})
+		if len(titleSplit) > 0 {
+			if strings.HasPrefix(titleSplit[0], "a href") || strings.HasPrefix(titleSplit[0], "http") {
+				title = "link"
+			} else {
+				title = titleSplit[0]
+			}
 		}
 
 		for _, img := range tweet.Photos {
