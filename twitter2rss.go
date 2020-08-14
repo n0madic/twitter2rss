@@ -1,6 +1,7 @@
 package twitter2rss
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"log"
@@ -18,14 +19,14 @@ import (
 var Index string
 
 // Twitter2RSS return RSS from twitter timeline
-func Twitter2RSS(screenName string, pages int, excludeReplies bool) (string, error) {
+func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, error) {
 	feed := &feeds.Feed{
 		Title:       "Twitter feed @" + screenName,
 		Link:        &feeds.Link{Href: "https://twitter.com/" + screenName},
 		Description: "Twitter feed @" + screenName + " through Twitter to RSS proxy by Nomadic",
 	}
 
-	for tweet := range twitterscraper.GetTweets(screenName, pages) {
+	for tweet := range twitterscraper.GetTweets(context.Background(), screenName, count) {
 		if tweet.Error != nil {
 			return "", tweet.Error
 		}
@@ -98,19 +99,19 @@ func HTTPHandler(w http.ResponseWriter, r *http.Request) {
 	if name != "" {
 		pageCount, _ := strconv.Atoi(r.URL.Query().Get("pages"))
 		statusCount, _ := strconv.Atoi(r.URL.Query().Get("count"))
-		if statusCount > 0 && pageCount == 0 {
-			pageCount = statusCount / 10
+		if pageCount > 0 && statusCount == 0 {
+			statusCount = pageCount * 10
 		}
-		if pageCount < 1 {
-			pageCount = 1
-		} else if pageCount > 10 {
-			pageCount = 10
+		if statusCount == 0 {
+			statusCount = 10
+		} else if statusCount > 100 {
+			statusCount = 100
 		}
 
 		excludeReplies := r.URL.Query().Get("exclude_replies") == "on"
 
-		log.Printf("Process timeline @%s (pages: %d, exclude_replies: %v)", name, pageCount, excludeReplies)
-		rss, err := Twitter2RSS(name, pageCount, excludeReplies)
+		log.Printf("Process timeline @%s (count: %d, exclude_replies: %v)", name, statusCount, excludeReplies)
+		rss, err := Twitter2RSS(name, statusCount, excludeReplies)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
