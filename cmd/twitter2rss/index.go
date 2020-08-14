@@ -32,9 +32,9 @@ func init() {
 							<div class="panel panel-default" style="margin-top: 20px;">
 								<div class="panel-body">
 									<div class="form-group" style="margin-bottom: 0;">
-										<label for="pages" class="col-sm-3 control-label">Number of pages (max 10):</label>
+										<label for="count" class="col-sm-3 control-label">Number of tweets (max 100):</label>
 										<div class="col-sm-2">
-											<input name="pages" id="pages" class="form-control" placeholder="1">
+											<input name="count" id="count" class="form-control" placeholder="10">
 										</div>
 										<input style="margin-top: 10px;" name="exclude_replies" id="exclude_replies" type="checkbox"> Exclude Replies
 									</div>
@@ -48,12 +48,12 @@ func init() {
 					var Form = document.getElementById('tform');
 					Form.onsubmit = function(event) {
 						document.getElementById('tform').action = '/' + document.getElementById('name').value;
-						var pages_input = document.getElementById('pages');
-						if (pages_input.value < 2) pages_input.disabled = true;
+						var count_input = document.getElementById('count');
+						if (count_input.value < 2) count_input.disabled = true;
 					};
 				</script>
 			<footer class="navbar-fixed-bottom">
-				<div style="text-align: center;"><p><a href="https://github.com/n0madic/twitter2rss">GitHub</a> &copy; Nomadic 2014-2019</p></div>
+				<div style="text-align: center;"><p><a href="https://github.com/n0madic/twitter2rss">GitHub</a> &copy; Nomadic 2014-2020</p></div>
 			</footer>
 		</div>
 	</body>
