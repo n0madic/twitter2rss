@@ -23,7 +23,7 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 		Description: "Twitter feed @" + screenName + " through Twitter to RSS proxy by Nomadic",
 	}
 
-	for tweet := range twitterscraper.GetTweets(context.Background(), screenName, count) {
+	for tweet := range twitterscraper.WithReplies(!excludeReplies).GetTweets(context.Background(), screenName, count) {
 		if tweet.Error != nil {
 			return "", tweet.Error
 		}
