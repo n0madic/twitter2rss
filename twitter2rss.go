@@ -2,6 +2,7 @@ package twitter2rss
 
 import (
 	"context"
+	"fmt"
 	"html"
 	"log"
 	"net/http"
@@ -48,6 +49,8 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 				title = titleSplit[0]
 			}
 		}
+		title = strings.TrimSuffix(title, "https")
+		title = strings.TrimSpace(title)
 
 		feed.Add(&feeds.Item{
 			Author:      &feeds.Author{Name: screenName},
@@ -57,6 +60,10 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 			Link:        &feeds.Link{Href: tweet.PermanentURL},
 			Title:       title,
 		})
+	}
+
+	if len(feed.Items) == 0 {
+		return "", fmt.Errorf("tweets not found")
 	}
 
 	return feed.ToRss()
@@ -85,6 +92,7 @@ func HTTPHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Process timeline @%s (count: %d, exclude_replies: %v)", name, statusCount, excludeReplies)
 		rss, err := Twitter2RSS(name, statusCount, excludeReplies)
 		if err != nil {
+			log.Printf("Error timeline @%s: %s\n", name, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 

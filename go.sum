@@ -5,5 +5,6 @@ github.com/n0madic/twitter-scraper v0.0.0-20201217091638-63386835989d h1:yvb16E+
 github.com/n0madic/twitter-scraper v0.0.0-20201217091638-63386835989d/go.mod h1:uzFP7WK9gCykBnULzfmxScXgIbs+423tWjbHRLYVq/g=
 github.com/n0madic/twitter-scraper v0.0.0-20201217095613-7628f22c6ca3 h1:WuCpy9Tkk/8Z7WsJEuhexPzQKACj5Ua29kCPEEy3zRQ=
 github.com/n0madic/twitter-scraper v0.0.0-20201217095613-7628f22c6ca3/go.mod h1:uzFP7WK9gCykBnULzfmxScXgIbs+423tWjbHRLYVq/g=
+github.com/victorspringer/http-cache v0.0.0-20190721184638-fe78e97af707 h1:Pg/LJmFZnr+hlP9sohJKDaxi1nTSOPvGNo8dBBgRIkM=
 github.com/victorspringer/http-cache v0.0.0-20190721184638-fe78e97af707/go.mod h1:V7CEaXWuLs0tH3DNWqJO+GVr8YgiAwRgBh76T4LNSPU=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
