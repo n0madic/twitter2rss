@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twitter2rss
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: twitter2rss
+  template:
+    metadata:
+      labels:
+        app: twitter2rss
+    spec:
+      containers:
+      - image: n0madic/twitter2rss
+        imagePullPolicy: Always
+        name: twitter2rss
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 30
+        env:
+        - name: TZ
+          value: "Europe/Kiev"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1"
+      automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twitter2rss
+spec:
+  type: ClusterIP
+  selector:
+    app: twitter2rss
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: twitter2rss
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+  - host: twitter2rss.nomadic.name
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: twitter2rss
+          servicePort: 80
+  tls:
+  - hosts:
+    - twitter2rss.nomadic.name
+    secretName: tls-twitter2rss.nomadic.name
