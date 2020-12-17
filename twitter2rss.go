@@ -2,15 +2,12 @@ package twitter2rss
 
 import (
 	"context"
-	"fmt"
 	"html"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/feeds"
 	twitterscraper "github.com/n0madic/twitter-scraper"
 )
@@ -49,31 +46,6 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 				title = "link"
 			} else {
 				title = titleSplit[0]
-			}
-		}
-
-		for _, img := range tweet.Photos {
-			tweet.HTML += fmt.Sprintf("\n<img src=\"%s\">", img)
-
-		}
-		for _, video := range tweet.Videos {
-			tweet.HTML += fmt.Sprintf("\n<img src=\"%s\">", video.Preview)
-		}
-
-		tweet.HTML = strings.Replace(tweet.HTML, "\n", "<br>", -1)
-
-		doc, err := goquery.NewDocumentFromReader(strings.NewReader(tweet.HTML))
-		if err == nil {
-			doc.Find("a.twitter-timeline-link").Each(func(i int, sel *goquery.Selection) {
-				if a, exists := sel.Attr("data-expanded-url"); exists {
-					u, err := url.Parse(a)
-					if err == nil && u.IsAbs() {
-						sel.SetAttr("href", a)
-					}
-				}
-			})
-			if html, err := doc.Html(); err == nil {
-				tweet.HTML = html
 			}
 		}
 
