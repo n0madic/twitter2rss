@@ -8,16 +8,24 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/feeds"
 	twitterscraper "github.com/n0madic/twitter-scraper"
 )
 
-// Index html for empty requests
-var Index string
+var (
+	// Index html for empty requests
+	Index string
+	// Global mutex
+	mu sync.Mutex
+)
 
 // Twitter2RSS return RSS from twitter timeline
 func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, error) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	feed := &feeds.Feed{
 		Title:       "Twitter feed @" + screenName,
 		Link:        &feeds.Link{Href: "https://twitter.com/" + screenName},
