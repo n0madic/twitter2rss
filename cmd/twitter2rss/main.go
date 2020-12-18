@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/caarlos0/env"
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/n0madic/twitter2rss"
@@ -14,19 +13,29 @@ import (
 	"github.com/victorspringer/http-cache/adapter/memory"
 )
 
+type config struct {
+	Port          string        `env:"PORT" envDefault:"8000"`
+	CacheCapacity int           `env:"CACHE_CAPACITY" envDefault:"10000"`
+	CacheTTL      time.Duration `env:"CACHE_TTL" envDefault:"15m"`
+}
+
 func main() {
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatal(err)
+	}
+
 	memcached, err := memory.NewAdapter(
 		memory.AdapterWithAlgorithm(memory.LRU),
-		memory.AdapterWithCapacity(10000),
+		memory.AdapterWithCapacity(cfg.CacheCapacity),
 	)
 	if err != nil {
-		fmt.Println(err)
 		log.Fatal(err)
 	}
 
 	cacheClient, err := cache.NewClient(
 		cache.ClientWithAdapter(memcached),
-		cache.ClientWithTTL(10*time.Minute),
+		cache.ClientWithTTL(cfg.CacheTTL),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -44,9 +53,5 @@ func main() {
 		http.Redirect(w, r, "//abs.twimg.com/favicons/twitter.ico", 301)
 	})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8000"
-	}
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+cfg.Port, nil))
 }
