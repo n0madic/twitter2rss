@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/didip/tollbooth/v6"
+	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/n0madic/twitter2rss"
 	cache "github.com/victorspringer/http-cache"
 	"github.com/victorspringer/http-cache/adapter/memory"
@@ -30,7 +32,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle("/", cacheClient.Middleware(http.HandlerFunc(twitter2rss.HTTPHandler)))
+	lmt := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Hour})
+
+	http.Handle("/",
+		cacheClient.Middleware(
+			tollbooth.LimitFuncHandler(lmt, http.HandlerFunc(twitter2rss.HTTPHandler)),
+		),
+	)
+
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "//abs.twimg.com/favicons/twitter.ico", 301)
 	})
