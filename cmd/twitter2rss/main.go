@@ -45,7 +45,9 @@ func main() {
 
 	http.Handle("/",
 		cacheClient.Middleware(
-			tollbooth.LimitFuncHandler(lmt, http.HandlerFunc(twitter2rss.HTTPHandler)),
+			tollbooth.LimitFuncHandler(lmt,
+				http.HandlerFunc(twitter2rss.HTTPHandler),
+			),
 		),
 	)
 
