@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"log"
 	"net/http"
 	"time"
@@ -17,6 +18,13 @@ type config struct {
 	Port          string        `env:"PORT" envDefault:"8000"`
 	CacheCapacity int           `env:"CACHE_CAPACITY" envDefault:"10000"`
 	CacheTTL      time.Duration `env:"CACHE_TTL" envDefault:"15m"`
+}
+
+//go:embed index.html
+var index string
+
+func init() {
+	twitter2rss.Index = index
 }
 
 func main() {
