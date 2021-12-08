@@ -60,7 +60,7 @@ func main() {
 	)
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "//abs.twimg.com/favicons/twitter.ico", 301)
+		http.Redirect(w, r, "//abs.twimg.com/favicons/twitter.ico", http.StatusMovedPermanently)
 	})
 
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, nil))
