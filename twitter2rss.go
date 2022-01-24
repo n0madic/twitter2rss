@@ -81,7 +81,7 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 func HTTPHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if name == "" {
-		name = strings.TrimPrefix(html.EscapeString(r.URL.Path), "/")
+		name = strings.Trim(html.EscapeString(r.URL.Path), "/")
 	}
 	if name != "" {
 		pageCount, _ := strconv.Atoi(r.URL.Query().Get("pages"))
