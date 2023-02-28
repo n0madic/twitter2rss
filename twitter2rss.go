@@ -22,7 +22,7 @@ var (
 )
 
 // Twitter2RSS return RSS from twitter timeline
-func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, error) {
+func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets bool) (string, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -32,12 +32,13 @@ func Twitter2RSS(screenName string, count int, excludeReplies bool) (string, err
 		Description: "Twitter feed @" + screenName + " through Twitter to RSS proxy by Nomadic",
 	}
 
-	for tweet := range twitterscraper.WithReplies(!excludeReplies).GetTweets(context.Background(), screenName, count) {
+	scraper := twitterscraper.New().WithReplies(!excludeReplies)
+	for tweet := range scraper.GetTweets(context.Background(), screenName, count) {
 		if tweet.Error != nil {
 			return "", tweet.Error
 		}
 
-		if excludeReplies && tweet.IsRetweet {
+		if (excludeReplies && tweet.IsRetweet) || (excludeRetweets && tweet.IsRetweet) {
 			continue
 		}
 
@@ -96,9 +97,10 @@ func HTTPHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		excludeReplies := r.URL.Query().Get("exclude_replies") == "on"
+		excludeRetweets := r.URL.Query().Get("exclude_retweets") == "on"
 
-		log.Printf("Process timeline @%s (count: %d, exclude_replies: %v)", name, statusCount, excludeReplies)
-		rss, err := Twitter2RSS(name, statusCount, excludeReplies)
+		log.Printf("Process timeline @%s (count: %d, exclude_replies: %v, exclude_retweets: %v)", name, statusCount, excludeReplies, excludeRetweets)
+		rss, err := Twitter2RSS(name, statusCount, excludeReplies, excludeRetweets)
 		if err != nil {
 			log.Printf("Error timeline @%s: %s\n", name, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
