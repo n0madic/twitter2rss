@@ -38,7 +38,7 @@ func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets b
 			return "", tweet.Error
 		}
 
-		if (excludeReplies && tweet.IsRetweet) || (excludeRetweets && tweet.IsRetweet) {
+		if (excludeReplies && tweet.IsReply) || (excludeRetweets && tweet.IsRetweet) {
 			continue
 		}
 
