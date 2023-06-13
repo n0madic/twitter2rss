@@ -7,17 +7,20 @@ import (
 	"time"
 
 	"github.com/caarlos0/env/v6"
-	"github.com/didip/tollbooth/v6"
-	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/n0madic/twitter2rss"
+	limiter "github.com/ulule/limiter/v3"
+	mhttp "github.com/ulule/limiter/v3/drivers/middleware/stdlib"
+	mstore "github.com/ulule/limiter/v3/drivers/store/memory"
 	cache "github.com/victorspringer/http-cache"
 	"github.com/victorspringer/http-cache/adapter/memory"
 )
 
 type config struct {
-	Port          string        `env:"PORT" envDefault:"8000"`
-	CacheCapacity int           `env:"CACHE_CAPACITY" envDefault:"10000"`
-	CacheTTL      time.Duration `env:"CACHE_TTL" envDefault:"15m"`
+	Port            string        `env:"PORT" envDefault:"8000"`
+	CacheCapacity   int           `env:"CACHE_CAPACITY" envDefault:"10000"`
+	CacheTTL        time.Duration `env:"CACHE_TTL" envDefault:"15m"`
+	RateLimit       string        `env:"RATE_LIMIT" envDefault:"1-M"`
+	RateLimitHeader string        `env:"RATE_LIMIT_HEADER" envDefault:"X-Forwarded-For"`
 }
 
 //go:embed index.html
@@ -49,11 +52,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	lmt := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Hour})
+	rate, err := limiter.NewRateFromFormatted(cfg.RateLimit)
+	if err != nil {
+		log.Fatal(err)
+	}
+	store := mstore.NewStore()
+	lmt := mhttp.NewMiddleware(limiter.New(store, rate, limiter.WithClientIPHeader(cfg.RateLimitHeader)))
 
 	http.Handle("/",
 		cacheClient.Middleware(
-			tollbooth.LimitFuncHandler(lmt,
+			lmt.Handler(
 				http.HandlerFunc(twitter2rss.HTTPHandler),
 			),
 		),

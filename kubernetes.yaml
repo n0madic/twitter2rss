@@ -28,6 +28,12 @@ spec:
         env:
         - name: TZ
           value: "Europe/Kiev"
+        - name: CACHE_TTL
+          value: "60m"
+        - name: RATE_LIMIT
+          value: "4-H"
+        - name: RATE_LIMIT_HEADER
+          value: "CF-Connecting-IP"
         resources:
           requests:
             memory: "128Mi"
@@ -50,7 +56,7 @@ spec:
     port: 80
     targetPort: 8000
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: twitter2rss
@@ -63,9 +69,12 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: twitter2rss
-          servicePort: 80
+          service:
+            name: twitter2rss
+            port:
+              number: 80
   tls:
   - hosts:
     - twitter2rss.nomadic.name
