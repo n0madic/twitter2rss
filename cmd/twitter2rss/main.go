@@ -71,5 +71,6 @@ func main() {
 		http.Redirect(w, r, "//abs.twimg.com/favicons/twitter.ico", http.StatusMovedPermanently)
 	})
 
+	log.Printf("Starting server on port %s", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, nil))
 }

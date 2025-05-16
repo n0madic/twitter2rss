@@ -6,12 +6,13 @@ import (
 	"html"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
 
 	"github.com/gorilla/feeds"
-	twitterscraper "github.com/n0madic/twitter-scraper"
+	twitterscraper "github.com/imperatrona/twitter-scraper"
 )
 
 var (
@@ -19,7 +20,27 @@ var (
 	Index string
 	// Global mutex
 	mu sync.Mutex
+	// Global scraper
+	scraper *twitterscraper.Scraper
 )
+
+func init() {
+	scraper = twitterscraper.New()
+	username := os.Getenv("TWITTER_USERNAME")
+	password := os.Getenv("TWITTER_PASSWORD")
+	if username != "" && password != "" {
+		err := scraper.Login(username, password)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		account, err := scraper.LoginOpenAccount()
+		if err != nil {
+			log.Fatal(err)
+		}
+		scraper.WithOpenAccount(account)
+	}
+}
 
 // Twitter2RSS return RSS from twitter timeline
 func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets bool) (string, error) {
@@ -32,8 +53,7 @@ func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets b
 		Description: "Twitter feed @" + screenName + " through Twitter to RSS proxy by Nomadic",
 	}
 
-	scraper := twitterscraper.New().WithReplies(!excludeReplies)
-	for tweet := range scraper.GetTweets(context.Background(), screenName, count) {
+	for tweet := range scraper.WithReplies(!excludeReplies).GetTweets(context.Background(), screenName, count) {
 		if tweet.Error != nil {
 			return "", tweet.Error
 		}
