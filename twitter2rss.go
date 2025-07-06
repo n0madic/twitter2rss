@@ -1,18 +1,17 @@
 package twitter2rss
 
 import (
-	"context"
 	"fmt"
 	"html"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/feeds"
-	twitterscraper "github.com/imperatrona/twitter-scraper"
+	twittertimeline "github.com/n0madic/twitter-timeline"
 )
 
 var (
@@ -21,25 +20,11 @@ var (
 	// Global mutex
 	mu sync.Mutex
 	// Global scraper
-	scraper *twitterscraper.Scraper
+	timeline *twittertimeline.Client
 )
 
 func init() {
-	scraper = twitterscraper.New()
-	username := os.Getenv("TWITTER_USERNAME")
-	password := os.Getenv("TWITTER_PASSWORD")
-	if username != "" && password != "" {
-		err := scraper.Login(username, password)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		account, err := scraper.LoginOpenAccount()
-		if err != nil {
-			log.Fatal(err)
-		}
-		scraper.WithOpenAccount(account)
-	}
+	timeline = twittertimeline.NewClient()
 }
 
 // Twitter2RSS return RSS from twitter timeline
@@ -53,17 +38,31 @@ func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets b
 		Description: "Twitter feed @" + screenName + " through Twitter to RSS proxy by Nomadic",
 	}
 
-	for tweet := range scraper.WithReplies(!excludeReplies).GetTweets(context.Background(), screenName, count) {
-		if tweet.Error != nil {
-			return "", tweet.Error
-		}
+	userID, err := timeline.GetUserID(screenName)
+	if err != nil {
+		return "", fmt.Errorf("failed to get user ID for %s: %w", screenName, err)
+	}
 
+	tweets, err := timeline.GetUserTweets(userID)
+	if err != nil {
+		return "", fmt.Errorf("failed to get tweets for user ID %s: %w", userID, err)
+	}
+	if len(tweets) == 0 {
+		return "", fmt.Errorf("no tweets found for user %s (ID: %s)", screenName, userID)
+	}
+
+	for _, tweet := range tweets {
 		if (excludeReplies && tweet.IsReply) || (excludeRetweets && tweet.IsRetweet) {
 			continue
 		}
 
-		if tweet.TimeParsed.After(feed.Created) {
-			feed.Created = tweet.TimeParsed
+		timeParsed, err := time.Parse(time.RubyDate, tweet.CreatedAt)
+		if err != nil {
+			timeParsed = time.Now()
+		}
+
+		if timeParsed.After(feed.Created) {
+			feed.Created = timeParsed
 		}
 
 		var title string
@@ -83,7 +82,7 @@ func Twitter2RSS(screenName string, count int, excludeReplies, excludeRetweets b
 
 		feed.Add(&feeds.Item{
 			Author:      &feeds.Author{Name: screenName},
-			Created:     tweet.TimeParsed,
+			Created:     timeParsed,
 			Description: tweet.HTML,
 			Id:          tweet.PermanentURL,
 			Link:        &feeds.Link{Href: tweet.PermanentURL},
