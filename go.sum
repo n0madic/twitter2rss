@@ -81,6 +81,8 @@ github.com/n0madic/twitter-timeline v0.0.0-20250704145241-6bc0118ccd37 h1:ReqLmE
 github.com/n0madic/twitter-timeline v0.0.0-20250704145241-6bc0118ccd37/go.mod h1:YN6R88loJrXmfirWDTgHB5IGW5M7hzFe0l6Jjm2HpMA=
 github.com/n0madic/twitter-timeline v0.0.0-20250812124151-13c0fb8b99f8 h1:JU+gcZwyNF1C+fUaEj4xocs3qEPvSiamhcKHjh3+NN8=
 github.com/n0madic/twitter-timeline v0.0.0-20250812124151-13c0fb8b99f8/go.mod h1:YN6R88loJrXmfirWDTgHB5IGW5M7hzFe0l6Jjm2HpMA=
+github.com/n0madic/twitter-timeline v0.0.0-20260306200828-9d9ab2af75f9 h1:v3sNu+j7c3dCzE/k7SVt/GP57kXN/sBt9F5owwnDaxA=
+github.com/n0madic/twitter-timeline v0.0.0-20260306200828-9d9ab2af75f9/go.mod h1:YN6R88loJrXmfirWDTgHB5IGW5M7hzFe0l6Jjm2HpMA=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
